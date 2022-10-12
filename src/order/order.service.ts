@@ -41,7 +41,9 @@ export class OrderService {
     }
     const amount = items.reduce((e, v) => e + v.product.price * v.quantity, 0);
     Object.assign(newOrder, { items, amount });
-    return this.orderRepository.save(newOrder);
+    const order = await this.orderRepository.save(newOrder);
+    delete order.user.password;
+    return order;
   }
 
   async findOrder({ username }: UserResponse) {
