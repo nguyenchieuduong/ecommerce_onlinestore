@@ -1,5 +1,11 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AdminGuard } from 'src/shared/guards/admin.guard';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dtos/create-category.dto';
@@ -25,5 +31,21 @@ export class CategoryService {
     if (!category)
       throw new HttpException('category not found', HttpStatus.NOT_FOUND);
     return this.categoryRepository.remove(category);
+  }
+
+  async findProductsByCategory(category: string, from: number, to: number) {
+    if (from !== undefined && to !== undefined && from < to) {
+      return this.categoryRepository.find({
+        where: { name: category },
+        relations: ['products'],
+        take: to - from,
+        skip: from,
+      });
+    } else {
+      return this.categoryRepository.find({
+        where: { name: category },
+        relations: ['products'],
+      });
+    }
   }
 }

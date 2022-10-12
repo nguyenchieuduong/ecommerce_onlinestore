@@ -3,6 +3,8 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/category/category.entity';
+import { CategoryService } from 'src/category/category.service';
+import { Item } from 'src/item/item.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
@@ -16,6 +18,7 @@ export class ProductService {
     @InjectRepository(Product) private productRepository: Repository<Product>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    private categoryService: CategoryService,
   ) {}
 
   async createProduct({
@@ -75,8 +78,25 @@ export class ProductService {
     return product;
   }
 
-  getAll() {
-    return this.productRepository.find({ relations: ['categories'] });
+  async findByName(name: string) {
+    const product = await this.productRepository.findOne({
+      where: { name },
+      relations: ['categories'],
+    });
+    if (!product) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    return product;
+  }
+
+  getAll(from: number, to: number) {
+    if (from !== undefined && to !== undefined && from < to) {
+      return this.productRepository.find({
+        relations: ['categories'],
+        take: to - from,
+        skip: from,
+      });
+    } else {
+      return this.productRepository.find({ relations: ['categories'] });
+    }
   }
 
   async updateBySlug(attrs: Partial<UpdateProductDto>, slug: string) {
@@ -100,5 +120,15 @@ export class ProductService {
     const product = await this.productRepository.findOne({ where: { slug } });
     if (!product) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     return this.productRepository.remove(product);
+  }
+
+  async findByCategory(category: string, from: number, to: number) {
+    return this.categoryService.findProductsByCategory(category, from, to);
+  }
+
+  updateQuantityAndSold(product: Product, item: Item) {
+    product.quantity = product.quantity - item.quantity;
+    product.sold = product.sold + item.quantity;
+    return this.productRepository.save(product);
   }
 }

@@ -1,8 +1,12 @@
+import { Order } from 'src/order/order.entity';
+import { Review } from 'src/review/review.entity';
 import {
   BeforeInsert,
   Column,
   Entity,
   Generated,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -32,8 +36,14 @@ export class User {
   })
   isActived: boolean;
 
+  @OneToOne(() => Order, (order) => order.user)
+  order: Order;
+
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
+
   @BeforeInsert()
-  async log() {
+  async hashPassword() {
     this.password = await bcrypt.hash(this.password, 4);
   }
 }

@@ -7,4 +7,10 @@ export class UserResponse {
   username: string;
   @Expose()
   token: string;
+
+  @Expose()
+  isAdmin: boolean;
+
+  @Expose()
+  isActived: boolean;
 }

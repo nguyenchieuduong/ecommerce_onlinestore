@@ -10,6 +10,11 @@ import { OrderModule } from './order/order.module';
 import { StripeModule } from './stripe/stripe.module';
 import { Product } from './product/product.entity';
 import { Category } from './category/category.entity';
+import { ItemModule } from './item/item.module';
+import { Order } from './order/order.entity';
+import { Item } from './item/item.entity';
+import { ReviewModule } from './review/review.module';
+import { Review } from './review/review.entity';
 
 @Module({
   imports: [
@@ -17,13 +22,15 @@ import { Category } from './category/category.entity';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [User, Product, Category],
+      entities: [User, Product, Category, Order, Item, Review],
       synchronize: true,
     }),
     ProductModule,
     CategoryModule,
     OrderModule,
     StripeModule,
+    ItemModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

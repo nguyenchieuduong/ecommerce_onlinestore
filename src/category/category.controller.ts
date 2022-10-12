@@ -23,7 +23,6 @@ export class CategoryController {
   }
 
   @Get()
-  @UseGuards(AdminGuard)
   getAll() {
     return this.categorySerivce.findAll();
   }

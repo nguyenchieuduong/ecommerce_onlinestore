@@ -9,6 +9,7 @@ import { AuthenticationMiddleware } from 'src/shared/middlewares/authentication.
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {

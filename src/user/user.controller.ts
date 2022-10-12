@@ -22,8 +22,12 @@ export class UserController {
   }
 
   @Post('/signup')
-  signup(@Body() body: CreateUserDto) {
-    return this.userService.createUser(body);
+  @Serialize(UserResponse)
+  async signup(@Body() body: CreateUserDto) {
+    const user = await this.userService.createUser(body);
+    const token = 'Token ' + this.userService.generateJwt(user);
+    Object.assign(user, { token });
+    return user;
   }
 
   @Post('/signin')

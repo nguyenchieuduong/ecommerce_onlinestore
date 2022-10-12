@@ -1,10 +1,14 @@
 import { Category } from 'src/category/category.entity';
+import { Item } from 'src/item/item.entity';
+import { Review } from 'src/review/review.entity';
 import {
   Column,
   Entity,
   Generated,
   JoinTable,
   ManyToMany,
+  OneToMany,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   Unique,
@@ -48,4 +52,10 @@ export class Product {
   })
   @JoinTable()
   categories: Category[];
+
+  @OneToMany(() => Item, (item) => item.product)
+  items: Item[];
+
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
 }

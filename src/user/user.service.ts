@@ -48,4 +48,8 @@ export class UserService {
     user.isAdmin = value;
     return this.userRepository.save(user);
   }
+
+  findByUsername(username: string) {
+    return this.userRepository.findOne({ where: { username } });
+  }
 }
